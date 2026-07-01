@@ -1,0 +1,43 @@
+<section class="buscar">
+  <h2>Consultar precio</h2>
+  <p class="subtitulo">Escribí el nombre del producto para ver su precio.</p>
+
+  <div class="caja-busqueda">
+    <input
+      type="text"
+      placeholder="Ej: Coca Cola 500ml"
+      [(ngModel)]="nombre"
+      (keyup.enter)="buscar()"
+      autofocus
+    />
+    <button (click)="buscar()">Buscar</button>
+  </div>
+
+  @if (cargando) {
+    <p class="estado">Buscando...</p>
+  }
+
+  @if (!cargando && buscoAlgunaVez && resultados.length === 0) {
+    <p class="estado vacio">No se encontró ningún producto con ese nombre.</p>
+  }
+
+ 
+
+  @if (!cargando && resultados.length > 0) {
+    <ul class="resultados">
+      @for (producto of resultados ; track producto.id) {
+        <li class="tarjeta-producto" [class.inactivo]="!producto.activo">
+          <div class="info">
+            <span class="nombre">{{ producto.nombre }}</span>
+            @if (producto.categoria) {
+              <span class="categoria">{{ producto.categoria }}</span>
+            }
+          </div>
+          <span class="precio">${{ producto.precio }}</span>
+        </li>
+
+      }
+    </ul>
+  }
+</section>
+

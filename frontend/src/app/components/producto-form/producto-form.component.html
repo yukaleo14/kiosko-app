@@ -1,0 +1,42 @@
+<form class="form-producto" (ngSubmit)="onSubmit()">
+  <h3>{{ productoEnEdicion ? 'Editar producto' : 'Nuevo producto' }}</h3>
+
+  <div class="campo">
+    <label for="nombre">Nombre</label>
+    <input id="nombre" type="text" [(ngModel)]="form.nombre" name="nombre" required />
+  </div>
+
+  <div class="fila">
+    <div class="campo">
+      <label for="precio">Precio</label>
+      <input id="precio" type="number" step="0.01" min="0" [(ngModel)]="form.precio" name="precio" required />
+    </div>
+    <div class="campo">
+      <label for="stock">Stock</label>
+      <input id="stock" type="number" min="0" [(ngModel)]="form.stock" name="stock" />
+    </div>
+  </div>
+
+  <div class="fila">
+    <!-- <div class="campo">
+      <label for="codigo">Código (opcional)</label>
+      <input id="codigo" type="text" [(ngModel)]="form.codigo" name="codigo" />
+    </div> -->
+    <div class="campo">
+      <label for="categoria">Categoría (opcional)</label>
+      <input id="categoria" type="text" [(ngModel)]="form.categoria" name="categoria" />
+    </div>
+  </div>
+
+  <label class="checkbox">
+    <input type="checkbox" [(ngModel)]="form.activo" name="activo" />
+    Producto activo
+  </label>
+
+  <div class="acciones">
+    <button type="button" class="secundario" (click)="cancelar.emit()">Cancelar</button>
+    <button type="submit" class="primario">
+      {{ productoEnEdicion ? 'Guardar cambios' : 'Crear producto' }}
+    </button>
+  </div>
+</form>

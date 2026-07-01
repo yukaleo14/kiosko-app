@@ -1,0 +1,51 @@
+:root {
+  /* Paleta: inspirada en el toldo verde y los colores cálidos de un kiosko */
+  --bg: #faf7f2;
+  --surface: #ffffff;
+  --ink: #1f2a24;
+  --ink-soft: #5b6760;
+  --brand: #2f6f4e;
+  --brand-dark: #234f38;
+  --accent: #e8762c;
+  --line: #e2ddd0;
+  --danger: #c1432b;
+
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+input,
+button,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  cursor: pointer;
+}

@@ -1,0 +1,104 @@
+<section class="lista">
+  <div class="encabezado">
+    <h2>Productos</h2>
+    @if (!mostrarFormulario) {
+      <button class="primario" (click)="abrirAlta()">+ Nuevo producto</button>
+    }
+  </div>
+
+  @if (mostrarFormulario) {
+    <app-producto-form
+      [productoEnEdicion]="productoEnEdicion"
+      (guardar)="onGuardar($event)"
+      (cancelar)="onCancelar()"
+    />
+  }
+
+  <div class="filtros">
+    <input 
+      type="text" 
+      placeholder="Buscar por nombre..." 
+      [(ngModel)]="filtroTexto" 
+      (ngModelChange)="paginaActual = 1"
+      class="input-busqueda"
+    />
+  </div>
+
+  <table class="tabla-productos">
+    <thead>
+      <tr>
+        <th class="ordenable" (click)="cambiarOrden('nombre')">
+          Nombre 
+          @if (columnaOrden === 'nombre') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+        </th>
+        <th class="ordenable" (click)="cambiarOrden('categoria')">
+          Categoría
+          @if (columnaOrden === 'categoria') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+        </th>
+        <th class="ordenable" (click)="cambiarOrden('precio')">
+          Precio
+          @if (columnaOrden === 'precio') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+        </th>
+        <th class="ordenable" (click)="cambiarOrden('stock')">
+          Stock
+          @if (columnaOrden === 'stock') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+        </th>
+        <th class="ordenable" (click)="cambiarOrden('activo')">
+          Estado
+          @if (columnaOrden === 'activo') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+        </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (producto of productosPaginados; track producto.id) {
+        <tr>
+          <td>{{ producto.nombre }}</td>
+          <td>{{ producto.categoria || '—' }}</td>
+          <td>${{ producto.precio }}</td>
+          <td>{{ producto.stock }}</td>
+          <td>
+            <span class="badge" [class.inactivo]="!producto.activo">
+              {{ producto.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="acciones-fila">
+            <button class="link" (click)="abrirEdicion(producto)">Editar</button>
+            <button class="link peligro" (click)="eliminar(producto)">Eliminar</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="6" class="vacio">No se encontraron productos.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (productosFiltradosYOrdenados.length > productosPorPagina) {
+    <div class="paginacion">
+      <button 
+        class="btn-paginacion" 
+        [disabled]="paginaActual === 1" 
+        (click)="cambiarPagina(paginaActual - 1)">
+        &laquo; Anterior
+      </button>
+
+      @for (pagina of listaPaginas; track pagina) {
+        <button 
+          class="btn-paginacion" 
+          [class.activo]="paginaActual === pagina" 
+          (click)="cambiarPagina(pagina)">
+          {{ pagina }}
+        </button>
+      }
+
+      <button 
+        class="btn-paginacion" 
+        [disabled]="paginaActual === totalPaginas" 
+        (click)="cambiarPagina(paginaActual + 1)">
+        Siguiente &raquo;
+      </button>
+    </div>
+  }
+</section>
