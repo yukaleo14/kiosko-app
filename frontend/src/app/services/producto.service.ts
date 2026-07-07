@@ -2,10 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Producto, ProductoForm } from '../models/producto.model';
+import { environment } from '../../environments/environment.prod';
+// import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ProductoService {
-  private readonly baseUrl = 'http://localhost:3000/api/productos';
+  private readonly baseUrl = `${environment.apiUrl}/productos`;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -19,6 +21,11 @@ export class ProductoService {
       params: { nombre },
     });
   }
+
+  obtenerCategorias(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/categorias`);
+  }
+
 
   obtener(id: number): Observable<Producto> {
     return this.http.get<Producto>(`${this.baseUrl}/${id}`);

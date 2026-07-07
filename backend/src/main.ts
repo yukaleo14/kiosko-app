@@ -5,9 +5,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Habilita que el frontend Angular (otro puerto) pueda consumir la API
+  const corsOrigin = process.env.CORS_ORIGIN?.split(',') ?? [
+    'http://localhost:4200',
+  ];
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: corsOrigin,
   });
 
   // Valida y transforma automáticamente los DTOs en cada request
