@@ -23,6 +23,15 @@ export class ProductosService {
     return this.productoRepository.find({ order: { nombre: 'ASC' } });
   }
 
+  findAllCategorias(): Promise<string[]> {
+    return this.productoRepository
+      .createQueryBuilder('producto')
+      .select('DISTINCT producto.categoria', 'categoria')
+      .orderBy('producto.categoria', 'ASC')
+      .getRawMany()
+      .then((result) => result.map((row) => row.categoria));
+  }
+
   // OBTENER UNO POR ID
   async findOne(id: number): Promise<Producto> {
     const producto = await this.productoRepository.findOneBy({ id });

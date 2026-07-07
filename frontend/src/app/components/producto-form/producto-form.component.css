@@ -30,10 +30,14 @@
   color: var(--ink-soft);
 }
 
-.campo input {
+.campo input, .campo select {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  color: inherit;
 }
 
 .checkbox {
@@ -66,4 +70,30 @@
   border: 1px solid var(--line) !important;
   background: #7681E5;
   color: #fff;
+}
+
+.nueva-categoria-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nueva-categoria-container input {
+  flex: 1;
+}
+
+.btn-cancelar-nueva {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-cancelar-nueva:hover {
+  color: #d32f2f;
 }

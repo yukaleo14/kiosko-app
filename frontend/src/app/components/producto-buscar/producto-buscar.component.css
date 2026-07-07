@@ -77,9 +77,6 @@
   padding: 16px 20px;
 }
 
-.tarjeta-producto.inactivo {
-  opacity: 0.5;
-}
 
 .info {
   display: flex;
