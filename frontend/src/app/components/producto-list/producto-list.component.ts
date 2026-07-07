@@ -19,6 +19,9 @@ export class ProductoListComponent implements OnInit {
   productos: Producto[] = [];
   mostrarFormulario = false;
   productoEnEdicion: Producto | null = null;
+  error = '';
+
+  categorias: string[] = [];
 
   // Nuevas propiedades para filtro y ordenamiento
   filtroTexto = '';
@@ -32,11 +35,18 @@ export class ProductoListComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+    this.cargarCategorias();
   }
 
   cargar(): void {
-    this.productoService.listar().subscribe((productos) => {
-      this.productos = productos;
+    this.error = '';
+    this.productoService.listar().subscribe({
+      next: (productos) => {
+        this.productos = productos;
+      },
+      error: () => {
+        this.error = 'No se pudieron cargar los productos. Probá de nuevo.';
+      },
     });
   }
 // 1. Primer paso: Filtrar y ordenar la lista completa
@@ -84,6 +94,14 @@ export class ProductoListComponent implements OnInit {
     return Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
   }
 
+  cargarCategorias(): void {
+    this.productoService.obtenerCategorias().subscribe(
+      (categorias) => this.categorias = categorias,
+      (error) => console.error('Error al cargar categorías', error)
+    );
+  }
+
+
   cambiarPagina(pagina: number): void {
     if (pagina >= 1 && pagina <= this.totalPaginas) {
       this.paginaActual = pagina;
@@ -102,11 +120,13 @@ export class ProductoListComponent implements OnInit {
   }
 
   abrirAlta(): void {
+    this.cargarCategorias(); // Actualiza la lista de categorías antes de guardar
     this.productoEnEdicion = null;
     this.mostrarFormulario = true;
   }
 
   abrirEdicion(producto: Producto): void {
+    this.cargarCategorias();
     this.productoEnEdicion = producto;
     this.mostrarFormulario = true;
   }
@@ -119,6 +139,10 @@ export class ProductoListComponent implements OnInit {
     peticion.subscribe(() => {
       this.mostrarFormulario = false;
       this.cargar();
+    },
+    (error) => {
+      console.error('Error al guardar producto', error);
+      this.error = 'Error al guardar producto. Por favor, inténtelo de nuevo más tarde.';
     });
   }
 
@@ -131,6 +155,11 @@ export class ProductoListComponent implements OnInit {
     if (!confirmado) {
       return;
     }
-    this.productoService.eliminar(producto.id).subscribe(() => this.cargar());
+    this.productoService.eliminar(producto.id).subscribe({
+      next: () => this.cargar(),
+      error: () => {
+        this.error = 'No se pudo eliminar el producto. Probá de nuevo.';
+      },
+    });
   }
 }
