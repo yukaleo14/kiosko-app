@@ -1,0 +1,64 @@
+.login {
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.tarjeta-login {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tarjeta-login h2 {
+  font-size: 22px;
+}
+
+.subtitulo {
+  color: var(--ink-soft);
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.campo input {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 14px;
+  margin: 0;
+}
+
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
