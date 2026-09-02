@@ -5,11 +5,28 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const corsOrigin = process.env.CORS_ORIGIN?.split(',') ?? [
-    'https://kiosko-app-front.onrender.com',
+  // const corsOrigin = process.env.CORS_ORIGIN?.split(',') ?? [
+  //   // 'https://kiosko-app-front.onrender.com',
+  //   'http://localhost:4200',
+  // ];
+  // app.enableCors({
+  //   origin: corsOrigin,
+  // });
+
+  // 1. Extraemos los orígenes del .env si existen
+  const origenesEnv = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
+
+  // 2. Forzamos a que localhost SIEMPRE esté en la lista permitida
+  const origenesPermitidos = [
+    'http://localhost:4200',
+    ...origenesEnv
   ];
+
+  // 3. Configuramos CORS de forma robusta
   app.enableCors({
-    origin: corsOrigin,
+    origin: origenesPermitidos,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   });
 
   // Valida y transforma automáticamente los DTOs en cada request
