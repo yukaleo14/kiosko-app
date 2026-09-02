@@ -1,14 +1,53 @@
-<header class="topbar">
-  <div class="brand">
-    <span class="brand-mark" style="background-color: #0A207D; color: #fff;">DC</span>
-    <h1>Don Carlos</h1>
-  </div>
-  <nav>
-    <a routerLink="/consulta" routerLinkActive="active">Consultar precio</a>
-    <a routerLink="/productos" routerLinkActive="active">Ver Productos</a>
-  </nav>
-</header>
-
-<main class="content">
-  <router-outlet />
-</main>
+@if (usuarioService.perfil$ | async; as perfil) {
+<div [style.--color-botones]="perfil.colorHeader"
+     [style.--color-texto-botones]="obtenerColorContraste(perfil.colorHeader)">
+  <!-- Asignamos el fondo y calculamos el contraste para guardarlo en la variable CSS -->
+  <header class="topbar" [style.background]="perfil.colorHeader"
+    [style.--color-texto]="obtenerColorContraste(perfil.colorHeader)">
+  
+    <div class="brand">
+      <!-- El texto del logo contrasta con colorMarca -->
+      <span class="brand-mark" [style.background-color]="perfil.colorMarca"
+        [style.color]="obtenerColorContraste(perfil.colorMarca)">
+        {{ perfil.marca }}
+      </span>
+      <h1>{{ perfil.nombreLocal }}</h1>
+    </div>
+  
+    <nav>
+      <a routerLink="/consulta" routerLinkActive="active"
+        [style.color]="obtenerColorContraste(perfil.colorHeader)">Consultar precio</a>
+      <a routerLink="/productos" routerLinkActive="active" [style.color]="obtenerColorContraste(perfil.colorHeader)">Ver
+        Productos</a>
+  
+      <div class="dropdown-container">
+        <button class="btn-perfil" [style.color]="obtenerColorContraste(perfil.colorHeader)" (click)="toggleMenu()">
+          Mi Cuenta <span class="flecha">▼</span>
+        </button>
+  
+        @if (menuAbierto) {
+        <div class="dropdown-menu">
+          <a routerLink="/perfil" (click)="menuAbierto = false">Editar Perfil</a>
+          <button (click)="cerrarSesion()" class="logout-btn">Cerrar sesión</button>
+        </div>
+        }
+      </div>
+  
+    </nav>
+  </header>
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>
+} @else {
+<div>
+  <header class="topbar" [style.background]="colorHeaderActual">
+    <div class="brand">
+      <h1>Bienvenido</h1>
+    </div>
+  </header>
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>
+}

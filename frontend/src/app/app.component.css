@@ -49,12 +49,117 @@ nav a:hover {
 }
 
 nav a.active {
-  background: #0A207D;
-  color: #fff;
+  background: var(--color-botones, #0A207D);
+  color: var(--color-texto-botones, #fff);
 }
 
 .content {
   max-width: 960px;
   margin: 0 auto;
   padding: 32px 24px 64px;
+}
+
+/* --- ESTILOS DEL DROPDOWN --- */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 16px; /* Separación de los enlaces normales */
+}
+
+.btn-perfil {
+  background: transparent;
+  border: 1px solid #0A207D;
+  color: #0A207D;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-perfil:hover {
+  background: var(--color-botones, #0A207D);
+  color: var(--color-texto-botones, #fff);
+}
+
+.flecha {
+  font-size: 10px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 180px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* Modificamos los enlaces/botones dentro del menú para que no hereden los estilos del nav general */
+.dropdown-menu a,
+.dropdown-menu button {
+  padding: 12px 16px;
+  text-align: left;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+  background: #f5f5f5;
+  color: var(--color-botones, #0A207D);
+}
+
+/* Estilo distintivo para el botón de cerrar sesión */
+.dropdown-menu .logout-btn {
+  color: #d32f2f;
+  border-top: 1px solid #e0e0e0;
+}
+
+.dropdown-menu .logout-btn:hover {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.topbar {
+  color: var(--color-texto, #000000);
+}
+
+/* Enlaces del navegador */
+nav a {
+  color: var(--color-texto, #000000);
+}
+
+nav a:hover {
+  background: rgba(128, 128, 128, 0.2); /* Fondo neutro para el hover */
+}
+
+/* Botón de Mi Cuenta */
+.btn-perfil {
+  color: var(--color-texto, #000000);
+  border: 1px solid var(--color-texto, #000000);
+}
+
+.btn-perfil:hover {
+  background: var(--color-texto, #000000);
+  /* Utilizamos un truco visual invirtiendo colores en hover */
+  color: inherit; 
+  opacity: 0.8;
 }
