@@ -3,8 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductosModule } from './productos/productos.module';
 import { Producto } from './productos/producto.entity';
+import { Usuario } from './usuario/usuario.entity';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { UsuarioModule } from './usuario/usuario.module';
+
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { AuthModule } from './auth/auth.module';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_DATABASE'),
-        entities: [Producto],
+        entities: [Producto, Usuario],
         synchronize: true, // OK para desarrollo: crea/actualiza las tablas automáticamente.
         ssl:
           config.get<string>('DB_SSL') === 'true'
@@ -31,6 +34,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     ProductosModule,
     AuthModule,
+    UsuarioModule,
   ],
   controllers: [AppController],
 })
