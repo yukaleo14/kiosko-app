@@ -1,41 +1,45 @@
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
-import { LoginResponse } from '../models/auth.model';
-
-const STORAGE_KEY = 'kiosko_token';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly baseUrl = `${environment.apiUrl}/auth`;
+  
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/auth`;
 
-  // Señal reactiva para que el navbar/guards sepan si hay sesión activa
-  readonly logueada = signal<boolean>(this.hayTokenGuardado());
-
-  constructor(private readonly http: HttpClient) {}
-
-  login(usuario: string, password: string): Observable<LoginResponse> {
-    return this.http
-      .post<LoginResponse>(`${this.baseUrl}/login`, { usuario, password })
-      .pipe(
-        tap((respuesta) => {
-          localStorage.setItem(STORAGE_KEY, respuesta.accessToken);
-          this.logueada.set(true);
-        }),
-      );
+  login(credenciales: any) {
+    return this.http.post<{ accessToken: string }>(`${this.apiUrl}/login`, credenciales).pipe(
+      tap(res => localStorage.setItem('token', res.accessToken))
+    );
   }
 
-  logout(): void {
-    localStorage.removeItem(STORAGE_KEY);
-    this.logueada.set(false);
+  register(datos: any) {
+    return this.http.post(`${this.apiUrl}/register`, datos);
   }
 
-  obtenerToken(): string | null {
-    return localStorage.getItem(STORAGE_KEY);
+  logout() {
+    localStorage.removeItem('token');
   }
 
-  private hayTokenGuardado(): boolean {
-    return !!localStorage.getItem(STORAGE_KEY);
+  getToken() {
+    return localStorage.getItem('token');
   }
+
+  obtenerDatosUsuario(): {sub: number, mail: string, nombreLocal: string} | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const payloadDecoded = atob(payloadBase64);
+      return JSON.parse(payloadDecoded);
+    } catch (error) {
+      console.error('Error al decodificar el token:', error);
+      return null;
+    }
+    }
 }
