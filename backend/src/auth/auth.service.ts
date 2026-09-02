@@ -1,35 +1,62 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
+import { Usuario } from '../usuario/usuario.entity';
+import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly config: ConfigService,
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
     private readonly jwtService: JwtService,
+    private readonly config: ConfigService,
   ) {}
 
-  async login(dto: LoginDto): Promise<{ accessToken: string }> {
-    const usuarioValido = this.config.get<string>('ADMIN_USERNAME');
-    const hashValido = this.config.get<string>('ADMIN_PASSWORD_HASH');
-
-    if (!usuarioValido || !hashValido) {
-      throw new UnauthorizedException(
-        'El servidor no tiene configuradas las credenciales de acceso.',
-      );
+  async register(dto: RegisterDto): Promise<{ mensaje: string }> {
+    const existe = await this.usuarioRepository.findOneBy({ mail: dto.mail });
+    if (existe) {
+      throw new ConflictException('El usuario ya existe.');
     }
 
-    const usuarioCoincide = dto.usuario === usuarioValido;
-    const passwordCoincide = await bcrypt.compare(dto.password, hashValido);
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(dto.password, salt);
 
-    if (!usuarioCoincide || !passwordCoincide) {
-      throw new UnauthorizedException('Usuario o contraseña incorrectos.');
+    const nuevoUsuario = this.usuarioRepository.create({
+      mail: dto.mail,
+      nombreLocal: dto.nombreLocal,
+      passwordHash,
+    });
+    try {
+      await this.usuarioRepository.save(nuevoUsuario);
+    } catch (error) {
+      throw new ConflictException('Error al registrar el usuario.');
     }
-
-    const payload = { sub: usuarioValido, rol: 'dueña' };
-    const accessToken = await this.jwtService.signAsync(payload);
-    return { accessToken };
+    return { mensaje: 'Usuario registrado exitosamente.' };
   }
+
+
+  async login(dto: LoginDto): Promise<{ accessToken: string }> {
+    const usuario = await this.usuarioRepository.findOneBy({ mail: dto.mail });
+
+    if (!usuario) {
+      throw new UnauthorizedException('Usuario no encontrado.');
+    }
+
+    const passwordValida = await bcrypt.compare(dto.password, usuario.passwordHash);
+    if (!passwordValida) {
+      throw new UnauthorizedException('Contraseña incorrecta.');
+    }
+
+    const payload = { sub: usuario.id, mail: usuario.mail, local: usuario.nombreLocal };
+
+    return { accessToken: await this.jwtService.signAsync(payload) };
+  }
+
+  
 }
