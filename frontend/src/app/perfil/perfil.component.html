@@ -1,0 +1,94 @@
+<section class="perfil-container">
+  <div class="perfil-header">
+    <h2>Editar Perfil</h2>
+    <p class="subtitulo">Personalizá la apariencia de tu Kiosko en tiempo real.</p>
+  </div>
+
+  <div class="perfil-content">
+    <!-- COLUMNA IZQUIERDA: Formulario -->
+    <div class="perfil-formulario-wrapper">
+      <form class="formulario" [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+        <div class="caja-input">
+          <label>Nombre del Local</label>
+          <input formControlName="nombreLocal" type="text" placeholder="Ej. Kiosko Don Carlos" />
+        </div>
+
+        <div class="caja-input">
+          <label>Texto del Icono (Máx 2 letras)</label>
+          <input formControlName="marca" type="text" maxlength="2" placeholder="Ej. DC" />
+        </div>
+
+        <div class="caja-colores">
+          <div class="caja-input color-picker-wrapper">
+            <label>Color de la barra superior</label>
+            <div class="color-preview">
+              <input formControlName="colorHeader" type="color" />
+              <span>{{ perfilForm.value.colorHeader || '#E7E6FF' | uppercase }}</span>
+            </div>
+          </div>
+          
+          <div class="caja-input color-picker-wrapper">
+            <label>Color del icono</label>
+            <div class="color-preview">
+              <input formControlName="colorMarca" type="color" />
+              <span>{{ perfilForm.value.colorMarca || '#000000' | uppercase }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="acciones">
+          <button type="submit" class="btn-primario" [disabled]="perfilForm.invalid || perfilForm.pristine">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- COLUMNA DERECHA: Vista Previa -->
+    <div class="perfil-preview-wrapper">
+      <h3>Vista previa</h3>
+      <div class="preview-box">
+        <!-- Recreamos la barra superior con los valores en vivo -->
+        <header class="topbar-preview" 
+                [style.background]="perfilForm.value.colorHeader || '#E7E6FF'"
+                [style.color]="obtenerColorContraste(perfilForm.value.colorHeader || '#E7E6FF')">
+          <div class="brand">
+            <span class="brand-mark" 
+                  [style.background-color]="perfilForm.value.colorMarca || '#000000'"
+                  [style.color]="obtenerColorContraste(perfilForm.value.colorMarca || '#000000')">
+              {{ perfilForm.value.marca || 'DC' }}
+            </span>
+            <h1>{{ perfilForm.value.nombreLocal || 'Nombre del Local' }}</h1>
+          </div>
+          <div class="fake-nav">
+            <div class="fake-btn" 
+                 [style.color]="obtenerColorContraste(perfilForm.value.colorHeader || '#E7E6FF')"
+                 [style.border-color]="obtenerColorContraste(perfilForm.value.colorHeader || '#E7E6FF')">
+              Mi Cuenta ▼
+            </div>
+          </div>
+        </header>
+
+        <!-- Contenido falso para mostrar cómo se vería una página -->
+        <div class="preview-body">
+          <h2>Productos</h2>
+          <div class="fake-table">
+            <div class="fake-row header-row">
+              <span>Nombre</span>
+              <span>Precio</span>
+            </div>
+            <div class="fake-row">
+              <span>Coca Cola 500ml</span>
+              <span>$1200</span>
+            </div>
+          </div>
+          <button class="fake-btn-primario"
+                  [style.background]="perfilForm.value.colorHeader || '#E7E6FF'"
+                  [style.color]="obtenerColorContraste(perfilForm.value.colorHeader || '#E7E6FF')">
+            + Nuevo producto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
