@@ -13,28 +13,34 @@ export class ProductosService {
   ) {}
 
   // ALTA
-  async create(dto: CreateProductoDto): Promise<Producto> {
-    const producto = this.productoRepository.create(dto);
+  async create(dto: CreateProductoDto, usuarioId: number): Promise<Producto> {
+    const producto = this.productoRepository.create({
+      ...dto,
+      usuario: { id: usuarioId } 
+  });
     return this.productoRepository.save(producto);
   }
 
   // LISTAR TODOS (para la grilla del ABM)
-  findAll(): Promise<Producto[]> {
-    return this.productoRepository.find({ order: { nombre: 'ASC' } });
+  findAll(usuarioId: number): Promise<Producto[]> {
+    return this.productoRepository.find({ 
+      where: { usuario: { id: usuarioId } }, 
+      order: { nombre: 'ASC' } });
   }
 
-  findAllCategorias(): Promise<string[]> {
+  findAllCategorias(usuarioId: number): Promise<string[]> {
     return this.productoRepository
       .createQueryBuilder('producto')
       .select('DISTINCT producto.categoria', 'categoria')
+      .where('producto.usuario = :usuarioId', { usuarioId })
       .orderBy('producto.categoria', 'ASC')
       .getRawMany()
       .then((result) => result.map((row) => row.categoria));
   }
 
   // OBTENER UNO POR ID
-  async findOne(id: number): Promise<Producto> {
-    const producto = await this.productoRepository.findOneBy({ id });
+  async findOne(id: number, usuarioId: number): Promise<Producto> {
+    const producto = await this.productoRepository.findOneBy({ id, usuario: { id: usuarioId } });
     if (!producto) {
       throw new NotFoundException(`No existe el producto con id ${id}`);
     }
@@ -42,26 +48,41 @@ export class ProductosService {
   }
 
   // CONSULTA MANUAL POR NOMBRE (búsqueda parcial, sin importar mayúsculas)
-  async buscarPorNombre(nombre: string): Promise<Producto[]> {
+  async buscarPorNombre(nombre: string, usuarioId: number): Promise<Producto[]> {
     if (!nombre || nombre.trim().length === 0) {
       return [];
     }
     return this.productoRepository.find({
-      where: { nombre: Like(`%${nombre.trim()}%`) },
+      where: { nombre: Like(`%${nombre.trim()}%`), usuario: { id: usuarioId } },
       order: { nombre: 'ASC' },
     });
   }
 
   // MODIFICACIÓN
-  async update(id: number, dto: UpdateProductoDto): Promise<Producto> {
-    const producto = await this.findOne(id);
+  async update(id: number, dto: UpdateProductoDto, usuarioId: number): Promise<Producto> {
+    const producto = await this.findOne(id, usuarioId);
     const actualizado = this.productoRepository.merge(producto, dto);
     return this.productoRepository.save(actualizado);
   }
 
   // BAJA
-  async remove(id: number): Promise<void> {
-    const producto = await this.findOne(id);
+  async remove(id: number, usuarioId: number): Promise<void> {
+    const producto = await this.findOne(id, usuarioId);
     await this.productoRepository.remove(producto);
+  }
+
+  // MIGRACION: Asignar productos sin usuario
+  async migrarProductosHuerfanos(usuarioId: number): Promise<{ mensaje: string; actualizados: number }> {
+    const resultado = await this.productoRepository
+      .createQueryBuilder()
+      .update(Producto)
+      .set({ usuario: { id: usuarioId } })
+      .where('usuario_id IS NULL')
+      .execute();
+
+    return {
+      mensaje: 'Migración exitosa',
+      actualizados: resultado.affected || 0
+    };
   }
 }
