@@ -33,25 +33,25 @@ export class ProductoFormComponent implements OnChanges {
   form: ProductoForm = { ...FORM_VACIO };
   creandoNuevaCategoria: boolean = false;
 
-  constructor(private readonly productoService: ProductoService) {}
+  constructor(private readonly productoService: ProductoService) { }
 
   ngOnChanges(): void {
     this.form = this.productoEnEdicion
       ? { ...this.productoEnEdicion }
       : { ...FORM_VACIO };
-      this.creandoNuevaCategoria = false;
+    this.creandoNuevaCategoria = false;
   }
 
   onCategoriaChange(valorSeleccionado: string): void {
     if (valorSeleccionado === '_NUEVA_') {
       this.creandoNuevaCategoria = true;
-      
+
       // El setTimeout asegura que Angular termine de cambiar la vista (el *ngIf)
       // antes de limpiar la variable, evitando que el input se trabe.
       setTimeout(() => {
         this.form.categoria = '';
       });
-      
+
     } else {
       this.form.categoria = valorSeleccionado;
     }

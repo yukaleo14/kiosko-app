@@ -43,8 +43,8 @@
   padding: 14px 22px;
   border: none;
   border-radius: 10px;
-  background: #0A207D;
-  color: #fff;
+  background: var(--color-botones, #0A207D);
+  color: var(--color-texto-botones, #fff);
   font-weight: 600;
 }
 

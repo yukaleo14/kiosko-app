@@ -62,8 +62,8 @@
 }
 
 .primario {
-  background: #0A207D;
-  color: #fff;
+  background: var(--color-botones, #0A207D);
+  color: var(--color-texto-botones, #fff);
 }
 
 .secundario {
