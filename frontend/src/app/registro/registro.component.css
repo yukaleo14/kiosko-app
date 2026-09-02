@@ -1,0 +1,94 @@
+/* Contenedor principal centrado */
+.auth-wrapper {
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--line, #e0e0e0);
+  border-radius: 12px; /* Mismo radio que la tarjeta-producto[cite: 18] */
+  padding: 32px;
+}
+
+.auth-wrapper h2 {
+  font-size: 26px; /* Mismo tamaño que .buscar h2[cite: 18] */
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+.subtitulo {
+  color: var(--ink-soft); /* Reutilizando tu variable[cite: 18] */
+  margin: 0 0 24px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.caja-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.caja-input label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Mismos estilos que tu .caja-busqueda input[cite: 18] */
+.caja-input input {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.caja-input input:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+/* Mismos estilos que tu botón de buscar[cite: 18] */
+.btn-primario {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-botones, #0A207D);
+  color: var(--color-texto-botones, #fff);
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pie-form {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* Mismo estilo que tu clase .link[cite: 18] */
+.link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 600;
+  color: var(--color-botones, #0A207D);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

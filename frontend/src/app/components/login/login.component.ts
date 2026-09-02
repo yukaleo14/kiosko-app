@@ -1,54 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent implements OnInit {
-  usuario = '';
-  password = '';
-  cargando = false;
-  error = '';
-  avisoSesionExpirada = false;
+export class LoginComponent {
+
+  private usuarioService = inject(UsuarioService);
 
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-  ) {}
+  ) { }
 
-  ngOnInit(): void {
-    this.avisoSesionExpirada = this.route.snapshot.queryParamMap.get('sesionExpirada') === '1';
-  }
+  private fb = inject(FormBuilder);
+
+
+  loginForm = this.fb.group({
+    mail: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
+  });
 
   cerrarSesion(): void {
     this.authService.logout();
+    this.usuarioService.limpiarPerfil();
     this.router.navigate(['/login']);
   }
 
 
   onSubmit(): void {
-    if (!this.usuario.trim() || !this.password.trim()) {
-      return;
+    if (this.loginForm.valid) {
+      this.authService.login(this.loginForm.value).subscribe({
+        next: () => {
+          this.usuarioService.cargarPerfil().subscribe({
+            next: () => {
+              alert('Login correcto');
+              this.router.navigate(['/productos']);
+            },
+            error: (err) => console.error('Error al cargar colores:', err)
+          });
+        },
+        error: () => alert('Credenciales incorrectas')
+      });
     }
-    this.cargando = true;
-    this.error = '';
-    this.authService.login(this.usuario, this.password).subscribe({
-      next: () => {
-        this.cargando = false;
-        this.router.navigate(['/productos']);
-      },
-      error: () => {
-        this.cargando = false;
-        this.error = 'Usuario o contraseña incorrectos.';
-      },
-    });
   }
 }

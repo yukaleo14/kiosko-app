@@ -1,0 +1,49 @@
+<section class="auth-wrapper">
+  <h2>Registrar mi Kiosko</h2>
+  <p class="subtitulo">Completá los datos para empezar a gestionar tus productos.</p>
+
+  <form class="formulario" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="caja-input">
+      <label for="nombreLocal">Nombre del Local</label>
+      <input 
+        id="nombreLocal" 
+        formControlName="nombreLocal" 
+        type="text" 
+        placeholder="Ej: Kiosko 1" 
+        required 
+        autofocus 
+      />
+    </div>
+
+    <div class="caja-input">
+      <label for="mail">Email</label>
+      <input 
+        id="mail" 
+        formControlName="mail" 
+        type="email" 
+        placeholder="tu@correo.com" 
+        required 
+      />
+    </div>
+
+    <div class="caja-input">
+      <label for="password">Contraseña</label>
+      <input 
+        id="password" 
+        formControlName="password" 
+        type="password" 
+        placeholder="Mínimo 6 caracteres" 
+        required 
+      />
+    </div>
+
+    <button (click)="onSubmit()" class="btn-primario" [disabled]="registerForm.invalid">
+      Registrarse
+    </button>
+  </form>
+
+  <div class="pie-form">
+    ¿Ya tenés cuenta? 
+    <a routerLink="/login" class="link">Iniciá sesión</a>
+  </div>
+</section>
