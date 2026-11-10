@@ -1,52 +1,70 @@
-# Kiosko - ABM de productos
+# Kiosko - Gestión y Consulta de Productos
 
-Base de proyecto para gestionar productos de un kiosko: alta, baja, modificación y consulta manual de precio por nombre. 
+Aplicación web integral para la administración y consulta de inventario para kioscos y comercios: alta, baja, modificación, control de stock y búsqueda de precios en tiempo real.
 
-El sistema soporta múltiples kioskos (multiusuario). Cada dueño puede registrarse, personalizar el aspecto visual de su plataforma (colores y logo) y tener su propio inventario de productos aislado.
+El sistema es **multiusuario (multitenant)**: cada comerciante se registra con su propio usuario, gestiona un catálogo de productos totalmente aislado y puede personalizar la apariencia visual de la plataforma (colores institucionales, marca y nombre del local).
 
-**Stack:** NestJS + TypeORM (backend) · Angular standalone (frontend) · MySQL en Docker.
+**Stack Tecnológico:**
+- **Backend:** NestJS 10 + TypeORM + PostgreSQL + Passport JWT
+- **Frontend:** Angular 17 (Standalone Components, Signals/RxJS, SweetAlert2, Hot-Toast)
+- **Base de Datos & Entorno Local:** PostgreSQL 16 + Adminer en Docker Compose
+
+---
+
+## Estructura del Proyecto
 
 ```
 kiosko-app/
-├── docker-compose.yml      # MySQL + Adminer
-├── backend/                # API REST NestJS
+├── docker-compose.yml          # PostgreSQL 16 y Adminer
+├── backend/                    # API REST con NestJS
 │   └── src/
-│       ├── app.module.ts
-│       ├── main.ts
-│       ├── auth/           # Login, Registro y JWT
-│       ├── usuario/        # Gestión y personalización del perfil
-│       └── productos/      # Entidad relacionada al usuario, dto, service, controller
-└── frontend/                # SPA Angular
+│       ├── app.module.ts       # Configuración global y conexión a PostgreSQL
+│       ├── main.ts             # Configuración de CORS y ValidationPipe global
+│       ├── auth/               # Autenticación (Login, Registro, JWT 24h)
+│       ├── usuario/            # Perfil y personalización visual (colores y marca)
+│       └── productos/          # ABM de productos, categorías y búsqueda
+└── frontend/                   # Single Page Application con Angular 17
     └── src/app/
-        ├── models/
-        ├── services/
+        ├── models/             # Interfaces TypeScript
+        ├── services/           # Servicios HTTP (Auth, Usuario, Producto)
+        ├── guards/             # Protección de rutas con JWT
         └── components/
-            ├── login/             # Inicio de sesión
-            ├── registro/          # Registro de nuevos kioskos
-            ├── perfil/            # Personalización de colores y nombre
-            ├── producto-buscar/   # Pantalla de consulta por nombre
-            ├── producto-list/     # Grilla del ABM
-            └── producto-form/     # Alta / Edición
+            ├── login/          # Inicio de sesión con persistencia y autocompletado
+            ├── registro/       # Registro de nuevos kioskos
+            ├── perfil/         # Personalización en vivo de marca y paleta de colores
+            ├── producto-buscar/# Consulta de precios reactiva en tiempo real
+            ├── producto-list/  # Grilla ABM con ordenamiento, paginación y SweetAlert2
+            └── producto-form/  # Formulario modal de producto y gestión de categorías
 ```
 
-## 1. Levantar la base de datos
+---
 
-Desde la raíz del proyecto:
+## 1. Base de Datos Local (Docker Compose)
+
+Para iniciar el contenedor de PostgreSQL y la herramienta de administración web (Adminer):
 
 ```bash
 docker compose up -d
 ```
 
-Esto levanta:
-- **MySQL** en `localhost:3306` 
-- **Adminer** en `http://localhost:8080`
-Servidor: mysql
-Usuario: kiosko_user
-Contraseña: kiosko_pass
-Base de datos: kiosko_db
+### Servicios incluidos:
+- **PostgreSQL 16:** Disponible en `localhost:5433` (mapeado al puerto interno 5432 para evitar conflictos con instancias existentes en el sistema).
+- **Adminer:** Disponible en `http://localhost:8080`.
 
+#### Conexión a Adminer:
+| Campo | Valor |
+|-------|-------|
+| **Sistema** | PostgreSQL |
+| **Servidor** | `db` |
+| **Usuario** | `kiosko_user` |
+| **Contraseña** | `kiosko_pass` |
+| **Base de datos** | `kiosko_db` |
+
+---
 
 ## 2. Backend (NestJS)
+
+### Instalación y ejecución:
 
 ```bash
 cd backend
@@ -54,22 +72,51 @@ npm install
 npm run start:dev
 ```
 
-La API queda en `http://localhost:3000/api`. Como `synchronize: true` está activo en
-`app.module.ts`, las tablas de base de datos se crearán solas la primera vez (cómodo para desarrollo; para producción conviene desactivarlo y usar migraciones de TypeORM).
+La API estará disponible en `http://localhost:3000/api`.
+
+### Variables de Entorno (`backend/.env`):
+Crea un archivo `.env` en la raíz de `backend/` con la siguiente estructura de ejemplo:
+
+```env
+PORT=3000
+
+# Base de datos PostgreSQL
+DB_HOST=localhost
+DB_PORT=5433
+DB_USERNAME=kiosko_user
+DB_PASSWORD=kiosko_pass
+DB_DATABASE=kiosko_db
+DB_SSL=false
+
+# Orígenes permitidos (CORS)
+CORS_ORIGIN=http://localhost:4200
+
+# Seguridad y Autenticación
+JWT_SECRET=tu_clave_secreta_jwt_segura_y_aleatoria
+JWT_EXPIRES_IN=24h
+```
 
 ### Endpoints Principales
 
-| Método | Ruta                         | Acción                              |
-|--------|------------------------------|--------------------------------------|
-| POST   | `/api/auth/register`         | Registrar un nuevo usuario           |
-| POST   | `/api/auth/login`            | Iniciar sesión y obtener JWT         |
-| GET    | `/api/usuario/perfil`        | Obtener personalización del kiosko   |
-| PATCH  | `/api/usuario/perfil`        | Modificar colores y nombre           |
-| GET    | `/api/productos`             | Listar todos los productos (del usuario logueado) |
-| GET    | `/api/productos/buscar?nombre=` | Consulta manual por nombre        |
-| POST   | `/api/productos`             | Alta de producto                     |
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/api/auth/register` | Registro de usuario/kiosko |
+| `POST` | `/api/auth/login` | Inicio de sesión (retorna token JWT con vigencia de 24h) |
+| `GET` | `/api/usuario/perfil` | Obtiene el perfil y colores del kiosko autenticado |
+| `PATCH` | `/api/usuario/perfil` | Actualiza colores y datos del kiosko |
+| `GET` | `/api/productos` | Lista todos los productos pertenecientes al usuario |
+| `GET` | `/api/productos/buscar?nombre=` | Búsqueda parcial por nombre insensible a mayúsculas (`ILike`) |
+| `GET` | `/api/productos/categorias` | Lista categorías únicas asociadas a los productos del usuario |
+| `POST` | `/api/productos` | Crea un nuevo producto |
+| `PATCH` | `/api/productos/:id` | Actualiza un producto existente |
+| `DELETE` | `/api/productos/:id` | Elimina un producto |
+| `DELETE` | `/api/productos/categorias?nombre=` | Desasigna y elimina una categoría existente |
 
-## 3. Frontend (Angular)
+---
+
+## 3. Frontend (Angular 17)
+
+### Instalación y ejecución:
 
 ```bash
 cd frontend
@@ -77,30 +124,23 @@ npm install
 npm start
 ```
 
-La app queda en `http://localhost:4200`, con las siguientes pantallas:
-- **Login y Registro** (`/login` y `/registro`): Acceso a la plataforma.
-- **Consultar precio** (`/consulta`): Buscador manual por nombre (requiere sesión).
-- **Productos (ABM)** (`/productos`): Grilla con alta, edición y baja.
-- **Editar Perfil** (`/perfil`): Personalización en tiempo real del branding del kiosko.
+La aplicación se abrirá en `http://localhost:4200`.
 
-## Autenticación, Multiusuario y Personalización
+### Vistas y Funcionalidades:
+- **Consulta de Precios (`/consulta`):** Pantalla principal y rápida de atención al cliente. Filtra productos de forma reactiva a medida que se escribe cada letra.
+- **Gestión de Inventario (`/productos`):** Grilla completa con paginación, filtros dinámicos, ordenamiento por columnas y diálogo de confirmación interactivo vía SweetAlert2 para eliminar productos.
+- **Formulario de Producto (`app-producto-form`):** Alta y edición con selector de categorías y opción rápida para eliminar categorías no deseadas.
+- **Inicio de Sesión y Registro (`/login`, `/registro`):** Autenticación por nombre de usuario con opción *"Recordar mi sesión"*, soporte para gestores de contraseñas de navegador y redirección automática.
+- **Personalización de Perfil (`/perfil`):** Editor visual para nombre del local, submarca y paleta de colores (`colorHeader`, `colorMarca`, botones y tipografías), reflejado al instante en toda la aplicación.
+- **Notificaciones:** Integración de alertas emergentes con `@ngneat/hot-toast` para confirmar operaciones de forma limpia y moderna.
 
-Anteriormente la aplicación estaba diseñada para un único kiosko mediante variables de entorno. Ahora el sistema es completamente **multiusuario**:
+---
 
-1. **Aislamiento de Datos**: Cuando te registras e inicias sesión, el backend vincula un token JWT (que expira en unas horas). Todas tus peticiones a la API irán firmadas con este token y **sólo verás los productos de tu kiosko**.
-2. **Personalización del Kiosko (Perfil)**: Cada usuario tiene configuraciones como `nombreLocal`, `marca`, `colorHeader` y `colorMarca`. 
-3. **Equilibrio Visual**: Al iniciar sesión y actualizar el perfil, toda la interfaz (botones principales, navegación y topbar) hereda los colores automáticamente generando una experiencia única para cada cliente.
+## 4. Despliegue en Producción
 
-### Variables de Entorno del Backend
-Asegúrate de tener un archivo `.env` configurado en `backend/`:
+Arquitectura cloud recomendada:
+- **Base de datos:** Servicio administrado PostgreSQL (por ejemplo [Aiven](https://aiven.io), Supabase, Neon o Render PostgreSQL).
+- **Backend:** [Render](https://render.com) (Web Service) o Railway.
+- **Frontend:** [Render](https://render.com) (Static Site), Vercel o Netlify.
 
-```
-JWT_SECRET=una-cadena-larga-y-aleatoria-que-solo-vos-conozcas
-```
-
-## Despliegue 
-
-Stack recomendado:
-- **Base de datos MySQL** → [Aiven](https://aiven.io/free-mysql-database) (plan Free permanente, sin tarjeta)
-- **Backend NestJS** → [Render](https://render.com) (Web Service, plan Free, sin tarjeta)
-- **Frontend Angular** → Render (Static Site, plan Free) — también podés usar Vercel o Netlify
+> **Seguridad:** En entornos de producción, define contraseñas seguras, activa `DB_SSL=true` y especifica un `JWT_SECRET` robusto y exclusivo mediante variables de entorno en tu panel de hosting. Nunca expongas credenciales o tokens en repositorios públicos.
