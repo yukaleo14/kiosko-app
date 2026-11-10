@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Producto } from './producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
@@ -32,10 +32,31 @@ export class ProductosService {
     return this.productoRepository
       .createQueryBuilder('producto')
       .select('DISTINCT producto.categoria', 'categoria')
-      .where('producto.usuario = :usuarioId', { usuarioId })
+      .where("producto.usuario = :usuarioId AND producto.categoria IS NOT NULL AND TRIM(producto.categoria) != ''", { usuarioId })
       .orderBy('producto.categoria', 'ASC')
       .getRawMany()
-      .then((result) => result.map((row) => row.categoria));
+      .then((result) =>
+        result
+          .map((row) => row.categoria)
+          .filter((cat): cat is string => Boolean(cat && cat.trim())),
+      );
+  }
+
+  async eliminarCategoria(nombre: string, usuarioId: number): Promise<{ mensaje: string; actualizados: number }> {
+    if (!nombre) {
+      return { mensaje: 'Categoría no especificada', actualizados: 0 };
+    }
+    const resultado = await this.productoRepository
+      .createQueryBuilder()
+      .update(Producto)
+      .set({ categoria: null })
+      .where('usuario_id = :usuarioId AND categoria = :nombre', { usuarioId, nombre })
+      .execute();
+
+    return {
+      mensaje: `Categoría "${nombre}" eliminada`,
+      actualizados: resultado.affected || 0,
+    };
   }
 
   // OBTENER UNO POR ID
@@ -47,13 +68,13 @@ export class ProductosService {
     return producto;
   }
 
-  // CONSULTA MANUAL POR NOMBRE (búsqueda parcial, sin importar mayúsculas)
+  // CONSULTA MANUAL POR NOMBRE (búsqueda parcial case-insensitive en Postgres)
   async buscarPorNombre(nombre: string, usuarioId: number): Promise<Producto[]> {
     if (!nombre || nombre.trim().length === 0) {
       return [];
     }
     return this.productoRepository.find({
-      where: { nombre: Like(`%${nombre.trim()}%`), usuario: { id: usuarioId } },
+      where: { nombre: ILike(`%${nombre.trim()}%`), usuario: { id: usuarioId } },
       order: { nombre: 'ASC' },
     });
   }

@@ -21,14 +21,22 @@ export class Producto {
   @Column({ type: 'varchar', length: 150 })
   nombre: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string | number) => (value !== null && value !== undefined ? Number(value) : value),
+    },
+  })
   precio: number;
 
   @Column({ type: 'int', default: 0 })
   stock: number;
 
   @Column({ type: 'varchar', length: 80, nullable: true })
-  categoria: string;
+  categoria: string | null;
 
   @CreateDateColumn({ name: 'creado_en' })
   creadoEn: Date;

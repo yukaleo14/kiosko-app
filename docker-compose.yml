@@ -1,26 +1,25 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: kiosko_mysql
+  postgres:
+    image: postgres:16-alpine
+    container_name: kiosko_postgres
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: kiosko_db
-      MYSQL_USER: kiosko_user
-      MYSQL_PASSWORD: kiosko_pass
+      POSTGRES_USER: kiosko_user
+      POSTGRES_PASSWORD: kiosko_pass
+      POSTGRES_DB: kiosko_db
     ports:
-      - "3306:3306"
+      - "5433:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - pg_kiosko_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      test: ["CMD-SHELL", "pg_isready -U kiosko_user -d kiosko_db"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  # Herramienta web opcional para inspeccionar la base de datos en http://localhost:8080
+  # Herramienta web para inspeccionar la base de datos en http://localhost:8080
   adminer:
     image: adminer
     container_name: kiosko_adminer
@@ -28,7 +27,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
+      - postgres
 
 volumes:
-  mysql_data:
+  pg_kiosko_data:

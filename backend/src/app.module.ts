@@ -18,17 +18,17 @@ import { UsuarioModule } from './usuario/usuario.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'mysql',
-        host: config.get<string>('DB_HOST'),
-        port: config.get<number>('DB_PORT'),
+        type: 'postgres',
+        host: config.get<string>('DB_HOST') ?? 'localhost',
+        port: Number(config.get<number>('DB_PORT')) || 5432,
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_DATABASE'),
         entities: [Producto, Usuario],
-        synchronize: true, // OK para desarrollo: crea/actualiza las tablas automáticamente.
+        synchronize: true, // Crea/actualiza las tablas automáticamente en Postgres
         ssl:
           config.get<string>('DB_SSL') === 'true'
-            ? {rejectUnauthorized: false,}
+            ? { rejectUnauthorized: false }
             : false,
       }),
     }),

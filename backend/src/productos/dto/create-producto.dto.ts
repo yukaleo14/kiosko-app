@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNumber,
@@ -20,11 +21,13 @@ export class CreateProductoDto {
   @MaxLength(50)
   codigo?: string;
 
+  @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 3 })
   @IsPositive()
   precio: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   stock?: number;
