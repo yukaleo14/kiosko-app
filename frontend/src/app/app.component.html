@@ -5,8 +5,8 @@
   <header class="topbar" [style.background]="perfil.colorHeader"
     [style.--color-texto]="obtenerColorContraste(perfil.colorHeader)">
   
+    <!-- Izquierda: Marca e Icono más pequeños en celular -->
     <div class="brand">
-      <!-- El texto del logo contrasta con colorMarca -->
       <span class="brand-mark" [style.background-color]="perfil.colorMarca"
         [style.color]="obtenerColorContraste(perfil.colorMarca)">
         {{ perfil.marca }}
@@ -14,14 +14,15 @@
       <h1>{{ perfil.nombreLocal }}</h1>
     </div>
   
-    <nav>
+    <!-- Vista de Escritorio -->
+    <nav class="nav-desktop">
       <a routerLink="/consulta" routerLinkActive="active"
         [style.color]="obtenerColorContraste(perfil.colorHeader)">Consultar precio</a>
       <a routerLink="/productos" routerLinkActive="active" [style.color]="obtenerColorContraste(perfil.colorHeader)">Ver
         Productos</a>
   
       <div class="dropdown-container">
-        <button class="btn-perfil" [style.color]="obtenerColorContraste(perfil.colorHeader)" (click)="toggleMenu()">
+        <button class="btn-perfil" [style.color]="obtenerColorContraste(perfil.colorHeader)" (click)="toggleMenu($event)">
           Mi Cuenta <span class="flecha">▼</span>
         </button>
   
@@ -32,8 +33,28 @@
         </div>
         }
       </div>
-  
     </nav>
+
+    <!-- Vista de Celular: Botón de opciones (Hamburguesa) a la derecha -->
+    <div class="menu-mobile-container">
+      <button class="btn-hamburger"
+        [style.color]="obtenerColorContraste(perfil.colorHeader)"
+        [style.border-color]="obtenerColorContraste(perfil.colorHeader)"
+        (click)="toggleMenu($event)"
+        aria-label="Abrir menú de opciones">
+        <span class="hamburger-icon">☰</span>
+      </button>
+
+      @if (menuAbierto) {
+      <div class="dropdown-menu mobile-menu">
+        <a routerLink="/consulta" routerLinkActive="active" (click)="menuAbierto = false">Consultar precio</a>
+        <a routerLink="/productos" routerLinkActive="active" (click)="menuAbierto = false">Ver Productos</a>
+        <a routerLink="/perfil" routerLinkActive="active" (click)="menuAbierto = false">Editar Perfil</a>
+        <button (click)="cerrarSesion()" class="logout-btn">Cerrar sesión</button>
+      </div>
+      }
+    </div>
+
   </header>
   <main class="content">
     <router-outlet />

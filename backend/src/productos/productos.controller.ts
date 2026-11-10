@@ -62,6 +62,13 @@ export class ProductosController {
     return this.productosService.update(id, dto, req.user.sub);
   }
 
+  // DELETE /productos/categorias?nombre=...
+  @UseGuards(JwtAuthGuard)
+  @Delete('categorias')
+  eliminarCategoria(@Query('nombre') nombre: string, @Request() req) {
+    return this.productosService.eliminarCategoria(nombre, req.user.sub);
+  }
+
   // DELETE /productos/:id -> Baja
   @UseGuards(JwtAuthGuard)
   @Delete(':id')

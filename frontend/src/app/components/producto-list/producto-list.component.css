@@ -18,6 +18,12 @@
   font-weight: 600;
 }
 
+.tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
 .tabla-productos {
   width: 100%;
   border-collapse: collapse;

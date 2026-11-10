@@ -23,6 +23,14 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .fila {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 .campo label {
@@ -96,4 +104,36 @@
 
 .btn-cancelar-nueva:hover {
   color: #d32f2f;
+}
+
+.categoria-select-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.categoria-select-container select {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-eliminar-categoria {
+  background: #fff5f5;
+  border: 1px solid #f5c2c7;
+  border-radius: 8px;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 8px 11px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.btn-eliminar-categoria:hover {
+  background: #dc3545;
+  color: #ffffff;
+  border-color: #dc3545;
 }

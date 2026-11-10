@@ -26,11 +26,21 @@
       <label for="categoria">Categoría (opcional)</label>
       <!-- Combobox para seleccionar categorías existentes -->
       <ng-container *ngIf="!creandoNuevaCategoria; else inputNuevaCategoria">
-        <select id="categoria" [ngModel]="form.categoria"  name="categoria" (ngModelChange)="onCategoriaChange($event)">
-          <option value="">Selecciona una categoría...</option>
-          <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
-          <option value="_NUEVA_" >➕ Crear nueva categoría</option>
-        </select>
+        <div class="categoria-select-container">
+          <select id="categoria" [ngModel]="form.categoria" name="categoria" (ngModelChange)="onCategoriaChange($event)">
+            <option value="">Selecciona una categoría...</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+            <option value="_NUEVA_">➕ Crear nueva categoría</option>
+          </select>
+          <button 
+            *ngIf="form.categoria && form.categoria !== '_NUEVA_'" 
+            type="button" 
+            class="btn-eliminar-categoria" 
+            (click)="confirmarEliminarCategoria(form.categoria)" 
+            title="Eliminar esta categoría">
+            ✖
+          </button>
+        </div>
       </ng-container>
 
       <!-- Input para escribir una nueva categoría -->

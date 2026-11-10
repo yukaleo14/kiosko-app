@@ -26,6 +26,12 @@ export class ProductoService {
     return this.http.get<string[]>(`${this.baseUrl}/categorias`);
   }
 
+  eliminarCategoria(nombre: string): Observable<{ mensaje: string; actualizados: number }> {
+    return this.http.delete<{ mensaje: string; actualizados: number }>(`${this.baseUrl}/categorias`, {
+      params: { nombre },
+    });
+  }
+
 
   obtener(id: number): Observable<Producto> {
     return this.http.get<Producto>(`${this.baseUrl}/${id}`);

@@ -23,6 +23,7 @@
   background: #0A207D;
   font-family: var(--font-display);
   font-weight: 700;
+  font-size: 14px;
 }
 
 .brand h1 {
@@ -30,27 +31,57 @@
   letter-spacing: 0.02em;
 }
 
-nav {
+/* NAVEGACIÓN EN ESCRITORIO */
+.nav-desktop {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
-nav a {
+.nav-desktop a {
   color: #09366E;
   text-decoration: none;
   font-weight: 500;
   padding: 8px 14px;
   border-radius: 20px;
   transition: background 0.15s ease;
+  white-space: nowrap;
 }
 
-nav a:hover {
+.nav-desktop a:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
-nav a.active {
+.nav-desktop a.active {
   background: var(--color-botones, #0A207D);
   color: var(--color-texto-botones, #fff);
+}
+
+/* BOTÓN MENÚ MÓVIL */
+.menu-mobile-container {
+  display: none;
+  position: relative;
+}
+
+.btn-hamburger {
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-hamburger:hover {
+  background: rgba(128, 128, 128, 0.15);
+}
+
+.hamburger-icon {
+  font-size: 20px;
 }
 
 .content {
@@ -63,7 +94,7 @@ nav a.active {
 .dropdown-container {
   position: relative;
   display: inline-block;
-  margin-left: 16px; /* Separación de los enlaces normales */
+  margin-left: 16px;
 }
 
 .btn-perfil {
@@ -78,6 +109,7 @@ nav a.active {
   align-items: center;
   gap: 6px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-perfil:hover {
@@ -97,14 +129,13 @@ nav a.active {
   background: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   z-index: 1000;
 }
 
-/* Modificamos los enlaces/botones dentro del menú para que no hereden los estilos del nav general */
 .dropdown-menu a,
 .dropdown-menu button {
   padding: 12px 16px;
@@ -127,7 +158,12 @@ nav a.active {
   color: var(--color-botones, #0A207D);
 }
 
-/* Estilo distintivo para el botón de cerrar sesión */
+.dropdown-menu a.active {
+  font-weight: 700;
+  color: var(--color-botones, #0A207D);
+  background: #f0f4ff;
+}
+
 .dropdown-menu .logout-btn {
   color: #d32f2f;
   border-top: 1px solid #e0e0e0;
@@ -142,16 +178,14 @@ nav a.active {
   color: var(--color-texto, #000000);
 }
 
-/* Enlaces del navegador */
-nav a {
+.nav-desktop a {
   color: var(--color-texto, #000000);
 }
 
-nav a:hover {
-  background: rgba(128, 128, 128, 0.2); /* Fondo neutro para el hover */
+.nav-desktop a:hover {
+  background: rgba(128, 128, 128, 0.2);
 }
 
-/* Botón de Mi Cuenta */
 .btn-perfil {
   color: var(--color-texto, #000000);
   border: 1px solid var(--color-texto, #000000);
@@ -159,7 +193,46 @@ nav a:hover {
 
 .btn-perfil:hover {
   background: var(--color-texto, #000000);
-  /* Utilizamos un truco visual invirtiendo colores en hover */
   color: inherit; 
   opacity: 0.8;
+}
+
+/* MEDIA QUERIES PARA CELULAR (<= 768px) */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 10px 16px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .brand h1 {
+    font-size: 16px;
+  }
+
+  .nav-desktop {
+    display: none;
+  }
+
+  .menu-mobile-container {
+    display: block;
+  }
+
+  .mobile-menu {
+    right: 0;
+    top: 130%;
+    width: 190px;
+  }
+
+  .content {
+    padding: 16px 12px 32px;
+  }
 }

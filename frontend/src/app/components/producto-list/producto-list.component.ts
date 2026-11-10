@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- IMPORTANTE: Agregar FormsModule
+import { HotToastService } from '@ngneat/hot-toast';
+import Swal from 'sweetalert2';
 import { ProductoService } from '../../services/producto.service';
 import { Producto, ProductoForm } from '../../models/producto.model';
 import { ProductoFormComponent } from '../producto-form/producto-form.component';
@@ -30,6 +32,8 @@ export class ProductoListComponent implements OnInit {
 
   paginaActual = 1;
   readonly productosPorPagina = 20;
+
+  private toast = inject(HotToastService);
 
   constructor(private readonly productoService: ProductoService) {}
 
@@ -132,17 +136,28 @@ export class ProductoListComponent implements OnInit {
   }
 
   onGuardar(evento: { id: number | null; datos: ProductoForm }): void {
+    const esCreacion = !evento.id;
     const peticion = evento.id
       ? this.productoService.actualizar(evento.id, evento.datos)
       : this.productoService.crear(evento.datos);
 
-    peticion.subscribe(() => {
-      this.mostrarFormulario = false;
-      this.cargar();
-    },
-    (error) => {
-      console.error('Error al guardar producto', error);
-      this.error = 'Error al guardar producto. Por favor, inténtelo de nuevo más tarde.';
+    peticion.subscribe({
+      next: () => {
+        this.mostrarFormulario = false;
+        if (esCreacion) {
+          this.toast.success('Producto creado con éxito');
+        } else {
+          this.toast.success('Producto actualizado con éxito');
+        }
+        this.cargar();
+      },
+      error: (error) => {
+        console.error('Error al guardar producto', error);
+        const detalle = error?.error?.message;
+        const mensajeError = Array.isArray(detalle) ? detalle.join(', ') : (detalle || 'Error al guardar producto.');
+        this.error = mensajeError;
+        this.toast.error(mensajeError);
+      }
     });
   }
 
@@ -150,16 +165,36 @@ export class ProductoListComponent implements OnInit {
     this.mostrarFormulario = false;
   }
 
+  onCategoriaEliminada(): void {
+    this.cargarCategorias();
+    this.cargar();
+  }
+
   eliminar(producto: Producto): void {
-    const confirmado = confirm(`¿Eliminar "${producto.nombre}"?`);
-    if (!confirmado) {
-      return;
-    }
-    this.productoService.eliminar(producto.id).subscribe({
-      next: () => this.cargar(),
-      error: () => {
-        this.error = 'No se pudo eliminar el producto. Probá de nuevo.';
-      },
+    Swal.fire({
+      title: '¿Eliminar producto?',
+      html: `¿Estás seguro de que deseas eliminar <strong>"${producto.nombre}"</strong>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#c1432b',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.productoService.eliminar(producto.id).subscribe({
+          next: () => {
+            this.toast.success('Producto eliminado con éxito');
+            this.cargar();
+            this.cargarCategorias();
+          },
+          error: () => {
+            this.error = 'No se pudo eliminar el producto. Probá de nuevo.';
+            this.toast.error('No se pudo eliminar el producto.');
+          },
+        });
+      }
     });
   }
 }

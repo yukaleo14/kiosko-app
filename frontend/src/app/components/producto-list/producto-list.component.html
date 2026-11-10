@@ -16,6 +16,7 @@
       [categorias]="categorias"
       (guardar)="onGuardar($event)"
       (cancelar)="onCancelar()"
+      (categoriaEliminada)="onCategoriaEliminada()"
     />
   }
 
@@ -29,51 +30,53 @@
     />
   </div>
 
-  <table class="tabla-productos">
-    <thead>
-      <tr>
-        <th class="ordenable" (click)="cambiarOrden('nombre')">
-          Nombre 
-          @if (columnaOrden === 'nombre') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
-        </th>
-        <th class="ordenable" (click)="cambiarOrden('categoria')">
-          Categoría
-          @if (columnaOrden === 'categoria') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
-        </th>
-        <th class="ordenable" (click)="cambiarOrden('precio')">
-          Precio
-          @if (columnaOrden === 'precio') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
-        </th>
-        <th class="ordenable" (click)="cambiarOrden('stock')">
-          Stock
-          @if (columnaOrden === 'stock') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
-        </th>
-        <th class="ordenable" (click)="cambiarOrden('activo')">
-          Estado
-          @if (columnaOrden === 'activo') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
-        </th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (producto of productosPaginados; track producto.id) {
+  <div class="tabla-contenedor">
+    <table class="tabla-productos">
+      <thead>
         <tr>
-          <td>{{ producto.nombre }}</td>
-          <td>{{ producto.categoria || '—' }}</td>
-          <td>${{ producto.precio }}</td>
-          <td>{{ producto.stock }}</td>
-          <td class="acciones-fila">
-            <button class="link" (click)="abrirEdicion(producto)">Editar</button>
-            <button class="link peligro" (click)="eliminar(producto)">Eliminar</button>
-          </td>
+          <th class="ordenable" (click)="cambiarOrden('nombre')">
+            Nombre 
+            @if (columnaOrden === 'nombre') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+          </th>
+          <th class="ordenable" (click)="cambiarOrden('categoria')">
+            Categoría
+            @if (columnaOrden === 'categoria') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+          </th>
+          <th class="ordenable" (click)="cambiarOrden('precio')">
+            Precio
+            @if (columnaOrden === 'precio') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+          </th>
+          <th class="ordenable" (click)="cambiarOrden('stock')">
+            Stock
+            @if (columnaOrden === 'stock') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+          </th>
+          <th class="ordenable" (click)="cambiarOrden('activo')">
+            Estado
+            @if (columnaOrden === 'activo') { <span>{{ ordenDescendente ? '▼' : '▲' }}</span> }
+          </th>
+          <th></th>
         </tr>
-      } @empty {
-        <tr>
-          <td colspan="6" class="vacio">No se encontraron productos.</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @for (producto of productosPaginados; track producto.id) {
+          <tr>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.categoria || '—' }}</td>
+            <td>${{ producto.precio }}</td>
+            <td>{{ producto.stock }}</td>
+            <td class="acciones-fila">
+              <button class="link" (click)="abrirEdicion(producto)">Editar</button>
+              <button class="link peligro" (click)="eliminar(producto)">Eliminar</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="vacio">No se encontraron productos.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
   @if (productosFiltradosYOrdenados.length > productosPorPagina) {
     <div class="paginacion">

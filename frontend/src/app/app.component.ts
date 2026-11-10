@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ElementRef, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { UsuarioService } from './services/usuario.service';
@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   public usuarioService = inject(UsuarioService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   marcaActual: string = '.';
   nombreLocalActual: string = '';
@@ -26,8 +27,18 @@ export class AppComponent implements OnInit {
 
   private perfilSub?: Subscription;
 
-  toggleMenu(): void {
+  toggleMenu(event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+    }
     this.menuAbierto = !this.menuAbierto;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event): void {
+    if (this.menuAbierto && !this.elementRef.nativeElement.contains(event.target)) {
+      this.menuAbierto = false;
+    }
   }
 
   ngOnInit() {
