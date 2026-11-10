@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HotToastService } from '@ngneat/hot-toast';
 import { Subscription } from 'rxjs';
 import { UsuarioService } from '../services/usuario.service';
 
@@ -11,10 +12,11 @@ import { UsuarioService } from '../services/usuario.service';
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css'
 })
-export class PerfilComponent implements OnInit {
+export class PerfilComponent implements OnInit, OnDestroy {
 
   private fb = inject(FormBuilder);
   private usuarioService = inject(UsuarioService);
+  private toast = inject(HotToastService);
 
   private perfilSub?: Subscription;
 
@@ -58,11 +60,11 @@ export class PerfilComponent implements OnInit {
 
       this.usuarioService.actualizarPerfil(datosActualizados).subscribe({
         next: () => {
-          alert('Perfil actualizado con éxito');
+          this.toast.success('Perfil actualizado con éxito');
         },
         error: (err) => {
           console.error('Error al actualizar el perfil:', err);
-          alert('Hubo un error al actualizar el perfil. Por favor, inténtalo de nuevo.');
+          this.toast.error('Hubo un error al actualizar el perfil. Por favor, inténtalo de nuevo.');
         }
       });
     }
@@ -74,7 +76,7 @@ export class PerfilComponent implements OnInit {
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return (yiq >= 128) ? '#000000' : '#FFFFFF';
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 128 ? '#000000' : '#FFFFFF';
   }
 }

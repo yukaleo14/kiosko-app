@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 // Definimos la estructura de los datos que esperamos del backend
 export interface PerfilUsuario {
     id?: number;
-    mail?: string;
+    usuario?: string;
     nombreLocal: string;
     marca: string;
     colorHeader: string;

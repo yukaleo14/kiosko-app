@@ -153,18 +153,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 10px 16px;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
 .topbar-preview .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .topbar-preview .brand h1 {
-  font-size: 18px;
+  font-size: 15px;
   margin: 0;
   transition: color 0.3s ease;
 }
@@ -173,20 +173,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.fake-nav .fake-btn {
-  padding: 6px 12px;
+.fake-nav .fake-btn-menu {
+  padding: 4px 8px;
   border: 1px solid;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1;
   transition: border-color 0.3s ease, color 0.3s ease;
 }
 

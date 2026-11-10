@@ -19,16 +19,16 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto): Promise<{ mensaje: string }> {
-    const existe = await this.usuarioRepository.findOneBy({ mail: dto.mail });
+    const existe = await this.usuarioRepository.findOneBy({ usuario: dto.usuario });
     if (existe) {
-      throw new ConflictException('El usuario ya existe.');
+      throw new ConflictException('El nombre de usuario ya existe.');
     }
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(dto.password, salt);
 
     const nuevoUsuario = this.usuarioRepository.create({
-      mail: dto.mail,
+      usuario: dto.usuario,
       nombreLocal: dto.nombreLocal,
       passwordHash,
     });
@@ -42,7 +42,7 @@ export class AuthService {
 
 
   async login(dto: LoginDto): Promise<{ accessToken: string }> {
-    const usuario = await this.usuarioRepository.findOneBy({ mail: dto.mail });
+    const usuario = await this.usuarioRepository.findOneBy({ usuario: dto.usuario });
 
     if (!usuario) {
       throw new UnauthorizedException('Usuario no encontrado.');
@@ -53,7 +53,7 @@ export class AuthService {
       throw new UnauthorizedException('Contraseña incorrecta.');
     }
 
-    const payload = { sub: usuario.id, mail: usuario.mail, local: usuario.nombreLocal };
+    const payload = { sub: usuario.id, usuario: usuario.usuario, local: usuario.nombreLocal };
 
     return { accessToken: await this.jwtService.signAsync(payload) };
   }

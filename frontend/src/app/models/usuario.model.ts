@@ -1,8 +1,7 @@
 export interface Usuario {
     id?: number;
-    mail?: string;
+    usuario?: string;
     nombreLocal: string;
     marca: string;
     colorHeader?: string;
-  
 }

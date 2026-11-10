@@ -2,7 +2,7 @@ import { IsString, MinLength } from 'class-validator';
 
 export class RegisterDto {
   @IsString()
-  mail: string;
+  usuario: string;
 
   @IsString()
   nombreLocal: string;

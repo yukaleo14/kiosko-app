@@ -6,7 +6,7 @@ export class Usuario {
   id: number;
 
   @Column({ type: 'varchar', unique: true })
-  mail: string;
+  usuario: string;
 
   @Column({ type: 'varchar', unique: true })
   nombreLocal: string;

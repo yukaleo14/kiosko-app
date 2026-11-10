@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Usuario } from "./usuario.entity";
@@ -14,7 +14,7 @@ export class UsuarioService {
     async obtenerPerfil(id:number){
         const usuario = await this.usuarioRepository.findOneBy({id});
         if(!usuario){
-            throw new Error('Usuario no encontrado');
+            throw new UnauthorizedException('Usuario no encontrado');
         }
 
         // Se excluye el passwordHash del perfil antes de devolverlo
