@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProductoService } from '../../services/producto.service';
-import { Producto, ProductoForm } from '../../models/producto.model';
-
+import { Producto } from '../../models/producto.model';
 
 @Component({
   selector: 'app-producto-buscar',
@@ -26,22 +25,14 @@ export class ProductoBuscarComponent implements OnInit {
   }
 
   cargar(): void {
-    this.productoService.listar().subscribe((productos) => {
-      this.productos = productos;
-    });
-  }
-
-  buscar(): void {
-    if (!this.nombre.trim()) {
-      this.resultados = [];
-      return;
-    }
     this.cargando = true;
-    this.buscoAlgunaVez = true;
-    this.productoService.buscarPorNombre(this.nombre).subscribe({
+    this.productoService.listar().subscribe({
       next: (productos) => {
-        this.resultados = productos;
+        this.productos = productos;
         this.cargando = false;
+        if (this.nombre.trim()) {
+          this.filtrar();
+        }
       },
       error: () => {
         this.cargando = false;
@@ -49,4 +40,21 @@ export class ProductoBuscarComponent implements OnInit {
     });
   }
 
+  filtrar(): void {
+    const termino = this.nombre.trim().toLowerCase();
+    if (!termino) {
+      this.resultados = [];
+      this.buscoAlgunaVez = false;
+      return;
+    }
+
+    this.buscoAlgunaVez = true;
+    this.resultados = this.productos.filter((p) =>
+      p.nombre.toLowerCase().includes(termino)
+    );
+  }
+
+  buscar(): void {
+    this.filtrar();
+  }
 }

@@ -1,43 +1,52 @@
 <section class="buscar">
-  <h2>Consultar precio</h2>
+  <div class="titulo-container">
+    <div class="icono-lupa">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </div>
+    <h2>Consultar precio</h2>
+  </div>
   <p class="subtitulo">Escribí el nombre del producto para ver su precio.</p>
 
-  <div class="caja-busqueda">
-    <input
-      type="text"
-      placeholder="Ej: Coca Cola 500ml"
-      [(ngModel)]="nombre"
-      (keyup.enter)="buscar()"
-      autofocus
-    />
-    <button (click)="buscar()">Buscar</button>
-  </div>
+    <div class="caja-busqueda">
+      <input 
+        type="text" 
+        placeholder="Ej: Coca Cola 500ml" 
+        [(ngModel)]="nombre" 
+        (ngModelChange)="filtrar()"
+        (keyup.enter)="buscar()" 
+        autofocus 
+      />
+      <button (click)="buscar()">Buscar</button>
+    </div>
 
-  @if (cargando) {
+    @if (cargando) {
     <p class="estado">Buscando...</p>
-  }
+    }
 
-  @if (!cargando && buscoAlgunaVez && resultados.length === 0) {
+    @if (!cargando && buscoAlgunaVez && resultados.length === 0) {
     <p class="estado vacio">No se encontró ningún producto con ese nombre.</p>
-  }
+    }
 
- 
 
-  @if (!cargando && resultados.length > 0) {
+
+    @if (!cargando && resultados.length > 0) {
     <ul class="resultados">
       @for (producto of resultados ; track producto.id) {
-        <li class="tarjeta-producto" [class.inactivo]="!producto.activo">
-          <div class="info">
-            <span class="nombre">{{ producto.nombre }}</span>
-            @if (producto.categoria) {
-              <span class="categoria">{{ producto.categoria }}</span>
-            }
-          </div>
-          <span class="precio">${{ producto.precio }}</span>
-        </li>
+      <li class="tarjeta-producto" [class.inactivo]="!producto.activo">
+        <div class="info">
+          <span class="nombre">{{ producto.nombre }}</span>
+          @if (producto.categoria) {
+          <span class="categoria">{{ producto.categoria }}</span>
+          }
+        </div>
+        <span class="precio">${{ producto.precio }}</span>
+      </li>
 
       }
     </ul>
-  }
+    }
 </section>
-

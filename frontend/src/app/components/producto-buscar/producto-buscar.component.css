@@ -1,9 +1,38 @@
+.titulo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.icono-lupa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--color-botones, #0A207D);
+  color: var(--color-texto-botones, #ffffff);
+  box-shadow: 0 4px 14px rgba(10, 32, 125, 0.18);
+}
+
+.icono-lupa svg {
+  width: 22px;
+  height: 22px;
+}
+
 .buscar h2 {
   font-size: 26px;
+  font-weight: 700;
+  margin: 0;
 }
 
 .subtitulo {
   color: var(--ink-soft);
+  text-align: center;
   margin: 6px 0 24px;
 }
 
