@@ -39,7 +39,11 @@ docker compose up -d
 
 Esto levanta:
 - **MySQL** en `localhost:3306` 
-- **Adminer** en `http://localhost:8080` (db: `kiosko_db`, user: `kiosko_user`, pass: `kiosko_pass`, servidor:`kiosko_mysql`)
+- **Adminer** en `http://localhost:8080`
+Servidor: mysql
+Usuario: kiosko_user
+Contraseña: kiosko_pass
+Base de datos: kiosko_db
 
 
 ## 2. Backend (NestJS)

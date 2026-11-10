@@ -9,9 +9,17 @@ export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  login(credenciales: any) {
+  login(credenciales: any, recordar: boolean = true) {
     return this.http.post<{ accessToken: string }>(`${this.apiUrl}/login`, credenciales).pipe(
-      tap(res => localStorage.setItem('token', res.accessToken))
+      tap(res => {
+        if (recordar) {
+          localStorage.setItem('token', res.accessToken);
+          sessionStorage.removeItem('token');
+        } else {
+          sessionStorage.setItem('token', res.accessToken);
+          localStorage.removeItem('token');
+        }
+      })
     );
   }
 
@@ -21,13 +29,14 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
   }
 
-  getToken() {
-    return localStorage.getItem('token');
+  getToken(): string | null {
+    return localStorage.getItem('token') || sessionStorage.getItem('token');
   }
 
-  obtenerDatosUsuario(): {sub: number, mail: string, nombreLocal: string} | null {
+  obtenerDatosUsuario(): {sub: number, usuario: string, nombreLocal: string} | null {
     const token = this.getToken();
     if (!token) {
       return null;

@@ -52,6 +52,29 @@
 }
 
 /* Mismos estilos que tu botón de buscar[cite: 18] */
+.opciones-login {
+  display: flex;
+  align-items: center;
+  margin: -4px 0 4px;
+}
+
+.checkbox-recordar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ink-soft);
+  user-select: none;
+}
+
+.checkbox-recordar input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-botones, #0A207D);
+}
+
 .btn-primario {
   width: 100%;
   padding: 12px;

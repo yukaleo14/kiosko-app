@@ -2,14 +2,16 @@
   <h2>Iniciar Sesión</h2>
   <p class="subtitulo">Ingresá a la gestión de tu kiosko.</p>
 
-  <form class="formulario" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form class="formulario" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="on">
     <div class="caja-input">
-      <label for="mail">Email</label>
+      <label for="usuario">Usuario</label>
       <input 
-        id="mail" 
-        formControlName="mail" 
-        type="email" 
-        placeholder="Ej: kiosko@gmail.com" 
+        id="usuario" 
+        name="username"
+        formControlName="usuario" 
+        type="text" 
+        autocomplete="username"
+        placeholder="Ej: doncarlos" 
         required 
         autofocus 
       />
@@ -19,11 +21,20 @@
       <label for="password">Contraseña</label>
       <input 
         id="password" 
+        name="password"
         formControlName="password" 
         type="password" 
+        autocomplete="current-password"
         placeholder="••••••••" 
         required 
       />
+    </div>
+
+    <div class="opciones-login">
+      <label class="checkbox-recordar">
+        <input type="checkbox" formControlName="recordar" />
+        <span>Recordar mi sesión</span>
+      </label>
     </div>
 
     <button type="submit" class="btn-primario" [disabled]="loginForm.invalid">
