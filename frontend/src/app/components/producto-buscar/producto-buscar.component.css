@@ -104,8 +104,22 @@
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 16px 20px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
+.tarjeta-producto:hover {
+  border-color: var(--color-botones, #0A207D);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+}
+
+.tarjeta-producto:active {
+  transform: scale(0.99);
+}
 
 .info {
   display: flex;
@@ -122,9 +136,38 @@
   color: var(--ink-soft);
 }
 
+.precio-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .precio {
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 700;
   color: var(--brand-dark);
+}
+
+.icono-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--color-botones, #0A207D);
+  background: rgba(10, 32, 125, 0.08);
+  transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.icono-editar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tarjeta-producto:hover .icono-editar {
+  background: var(--color-botones, #0A207D);
+  color: var(--color-texto-botones, #ffffff);
+  transform: scale(1.08);
 }
